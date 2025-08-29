@@ -14,4 +14,3 @@ $ docker-compose -f docker-compose.prod.yml up -d
 ### Spring profiles
 local - запускаем с этим профилем приложение локально
 
-
