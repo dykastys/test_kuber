@@ -1,0 +1,15 @@
+controller:
+  service:
+    type: LoadBalancer
+    nodePorts:
+      http: 30080
+      https: 30443
+  config:
+    use-proxy-protocol: "false"
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/os: linux
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
