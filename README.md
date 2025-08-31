@@ -68,3 +68,6 @@ $ minikube tunnel
 local - запускаем с этим профилем приложение локально
 
 
+### URL для доступа из браузера 
+#### (хост указан в ingress.yaml)
+http://testkuber/all
