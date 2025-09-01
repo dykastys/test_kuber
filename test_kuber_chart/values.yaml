@@ -1,0 +1,53 @@
+# Включение NGINX Ingress Controller
+nginxIngress:
+  enabled: true
+  controller:
+    service:
+      type: LoadBalancer
+      nodePorts:
+        http: 30080
+        https: 30443
+    replicaCount: 1
+    nodeSelector:
+      kubernetes.io/os: linux
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+    ingressClassResource:
+      name: nginx
+      enabled: true
+      default: true     # ← делает IngressClass/nginx дефолтным
+
+# Параметры приложения
+app:
+  replicaCount: 1
+  image: dykastys/test_kuber:latest
+  containerPort: 8090
+
+# Параметры сервиса
+service:
+  port: 80
+  targetPort: 8090
+
+# Ingress для приложения
+ingress:
+  enabled: true
+  host: testkuber
+  pathType: ImplementationSpecific
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+
+# PostgreSQL
+postgres:
+  enabled: true
+  image: postgres:14
+  port: 5432
+  storageClass: standard   # ← должно совпадать с именем из `kubectl get storageclass`
+  storage: 1Gi
+  persistence:
+    enabled: true
+
+# База данных — только имя (не секрет!)
+db:
+  name: test_kuber_prod

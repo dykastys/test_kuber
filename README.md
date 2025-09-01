@@ -16,52 +16,31 @@ $ minikube addons list
 $ minikube addons disable ingress
 - выключаем, если включен
 ------------------------------------------------------------------------------------------------------------------
-# Создать ConfigMap и Secret
-$ kubectl apply -f k8s/configmap.yaml
-$ kubectl apply -f k8s/secret.yaml
+$ cd test_kuber_chart
+- переходим в папку test_kuber_chart
 
-# Применяем PostgreSQL
-$ kubectl apply -f k8s/postgres/postgres-pv.yaml
-$ kubectl apply -f k8s/postgres/postgres-statefulset.yaml
-$ kubectl apply -f k8s/postgres/postgres-service.yaml
+$ helm dep build
+- билдим helm чарт
 
-# Применяем приложение
-$ kubectl apply -f k8s/app/app-deployment.yaml
-$ kubectl apply -f k8s/app/app-service.yaml
+$ helm install myapp . -f values.yaml -f values-secret.yaml
+- запускаем чарт
 
-# Применяем Ingress
-$ kubectl apply -f k8s/ingress/ingress.yaml
----------------------------------------------------------
+$ helm uninstall myapp 
+- удаляем запущенный чарт, если нужно
+
 # проверка
 $ kubectl get pods
+$ kubectl get pvc
 $ kubectl get svc
 $ kubectl get ingress
-$ kubectl get configmap
-$ kubectl get secret
-------------------------------------------------------------------------------------------------------------------
-# устанавливка ingress-контроллер через helm
-$ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-- добавить ingress-nginx репозиторий (если отсутствует)
 
-$ helm install nginx-ingress ingress-nginx/ingress-nginx -f k8s/ingress/nginx-ingress.yaml --namespace ingress-nginx --create-namespace
-
----------------------------------------------------------
-# проверки
-
-# проверка, что контроллер запущен
-$ kubectl get pods -n ingress-nginx
-
-# проверка, что сервис контроллера запущен
-$ kubectl get svc -n ingress-nginx
----------------------------------------------------------
-$ helm delete nginx-ingress -n ingress-nginx
-- если нужно удалить ингресс контроллер для дальнейшей переустановки
----------------------------------------------------------
-$ minikube tunnel
-- в отдельной вкладке терминала запускаем туннель
+$ kubectl logs deployment/myapp-test-kuber-chart
+- логи приложения
 ------------------------------------------------------------------------------------------------------------------
 (для windows) добавь в etc\hosts
 127.0.0.1 testkuber
+и
+192.168.49.2 testkuber (minikube ip)
 ```
 
 ### Spring profiles

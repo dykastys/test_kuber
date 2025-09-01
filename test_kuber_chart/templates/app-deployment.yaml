@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "spring-app.fullname" . }}
+  labels:
+    {{- include "spring-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "spring-app.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "spring-app.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: spring-app
+          image: {{ .Values.app.image }}
+          ports:
+            - containerPort: {{ .Values.app.containerPort }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "spring-app.fullname" . }}-config
+            - secretRef:
+                name: {{ include "postgres.fullname" . }}-secret
