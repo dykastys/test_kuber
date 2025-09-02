@@ -1,0 +1,34 @@
+1. ingress-nginx
+
+Добавлять ingress-nginx как зависимость не рекомендуется в продакшене.
+Это нарушает принципы разделения зон ответственности и приводит к дублированию.
+Лучше установить контроллер один раз, а приложения просто подключать к нему через Ingress.
+Если мне понадобится сделать ещё один или несколько чартов, этот момент стоит учесть и переделать.
+
+-----------------------------------------------------------------------------------------------------------------------
+
+2. PVC, PV и StorageClass
+
+На основе шаблона volumeClaimTemplates в postgres-statefulset.yaml, при создании поды (например, postgres-0, postgres-1, ...),
+для каждого пода автоматически создаётся PersistentVolumeClaim (PVC).
+PV создаётся автоматически на основе storageclass и provisioner и что в кластере по умолчанию включена Dynamic Volume Provisioning.
+
+$ kubectl get storageclass - покажет все storageclass кластера.
+standard - создаётся миникубом по умолчанию.
+postgres-sc - наш кастомный storageclass с изменёнными параметрами (realPolicy и allowVolumeExpansion).
+
+Параметр realPolicy: Retain - после удаления PVC, PV остаётся в статусе Released и не удаляется,
+чтобы данные сохранились, и с ними можно было бы как то взаимодействовать.
+
+Параметр provisioner: k8s.io/minikube-hostpath - использует провайдер для хостинга на миникубе. Для прода его нужно изменить.
+provisioner: kubernetes.io/aws-ebs # ← провайдер: зависит от облака
+
+Параметр volumeBindingMode: Immediate - это настройка связки PV и PVC. Immediate - это быстрая связка без зонирования.
+Для продакшена с облачными дисками (AWS EBS, GCP PD) — нужно использовать volumeBindingMode: WaitForFirstConsumer
+
+Параметр allowVolumeExpansion: true в StorageClass — это возможность увеличить размер PersistentVolume (PV) "на лету",
+то есть без удаления PVC и потери данных.
+$ kubectl edit pvc postgres-storage-postgres-0 - вызываем, и редактируем PVC изменяя storage например.
+
+-----------------------------------------------------------------------------------------------------------------------
+

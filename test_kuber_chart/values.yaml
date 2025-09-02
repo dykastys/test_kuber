@@ -43,11 +43,21 @@ postgres:
   enabled: true
   image: postgres:14
   port: 5432
-  storageClass: standard   # ← должно совпадать с именем из `kubectl get storageclass`
-  storage: 1Gi
   persistence:
     enabled: true
 
-# База данных — только имя (не секрет!)
+  # Настройки StorageClass
+  storageClassCreate: true              # ← создаёт ли чарт StorageClass
+  storageClassDefault: false            # ← сделать ли его default StorageClass
+  storageClassName: postgres-sc         # ← имя создаваемого StorageClass
+  provisioner: k8s.io/minikube-hostpath # ← провайдер для миникуба. На проде или в облаке используем необходимый.
+  volumeBindingMode: Immediate          # ← привязка PV при создании PVC
+  allowVolumeExpansion: true
+
+  # Используем новый StorageClass
+  storageClass: postgres-sc
+  storage: 1Gi
+
+# База данных
 db:
   name: test_kuber_prod

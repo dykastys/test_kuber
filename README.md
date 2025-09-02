@@ -25,12 +25,13 @@ $ helm dep build
 $ helm install myapp . -f values.yaml -f values-secret.yaml
 - запускаем чарт
 
-$ helm uninstall myapp 
+$ helm uninstall myapp
 - удаляем запущенный чарт, если нужно
 
 # проверка
 $ kubectl get pods
 $ kubectl get pvc
+$ kubectl get pv
 $ kubectl get svc
 $ kubectl get ingress
 
@@ -42,8 +43,16 @@ $ kubectl logs deployment/myapp-test-kuber-chart
 и
 192.168.49.2 testkuber (minikube ip)
 ```
+### Для подключения к БД извне
+```
+# сначала находим имя поды postgresql
+$ kubectl get pods  
+
+# после прокидываем порты на пк
+$ kubectl port-forward postgres-0 5432:5432
+```
+Консоль будет активна, и пока мы её не закроем, или не выйдем из активного режима,
+к БД можно подключиться средствами IntellijIdea или DBeaver например.
 
 ### Spring profiles
 local - запускаем с этим профилем приложение локально
-
-

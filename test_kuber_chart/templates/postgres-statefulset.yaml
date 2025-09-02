@@ -42,7 +42,7 @@ spec:
               memory: "256Mi"
               cpu: "250m"
       restartPolicy: Always
-  volumeClaimTemplates:
+  volumeClaimTemplates:       # комментарий в description.txt
     - metadata:
         name: postgres-storage
       spec:
