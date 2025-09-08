@@ -24,3 +24,40 @@ spec:
                 name: {{ include "spring-app.fullname" . }}-config
             - secretRef:
                 name: {{ include "postgres.fullname" . }}-secret
+            # --- пробы ---
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.app.containerPort }}
+              httpHeaders:
+                - name: Accept
+                  value: application/json
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.app.containerPort }}
+              httpHeaders:
+                - name: Accept
+                  value: application/json
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.app.containerPort }}
+              httpHeaders:
+                - name: Accept
+                  value: application/json
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+            # Устанавливаем долгий порог, чтобы дать приложению время на запуск

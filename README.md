@@ -15,12 +15,15 @@ $ minikube addons list
 
 $ minikube addons disable ingress
 - выключаем, если включен
+
+$ kubectl create secret generic grafana-basic-auth --from-file=auth
+- создаём секрет для авторизации в Grafana 
 ------------------------------------------------------------------------------------------------------------------
 $ cd test_kuber_chart
 - переходим в папку test_kuber_chart
 
 $ helm dep build
-- билдим helm чарт
+- билдим зависимости helm чарта (ingress-nginx и prometheus сервер)
 
 $ helm install myapp . -f values.yaml -f values-secret.yaml
 - запускаем чарт
@@ -33,7 +36,9 @@ $ kubectl get pods
 $ kubectl get pvc
 $ kubectl get pv
 $ kubectl get svc
+$ kubectl get rs
 $ kubectl get ingress
+$ kubectl get endpoints myapp-grafana
 
 $ kubectl logs deployment/myapp-test-kuber-chart
 - логи приложения
@@ -41,7 +46,7 @@ $ kubectl logs deployment/myapp-test-kuber-chart
 (для windows) добавь в etc\hosts
 127.0.0.1 testkuber
 и
-192.168.49.2 testkuber (minikube ip)
+127.0.0.1 testkuber.grafana
 ```
 ### Для подключения к БД извне
 ```
@@ -56,3 +61,11 @@ $ kubectl port-forward postgres-0 5432:5432
 
 ### Spring profiles
 local - запускаем с этим профилем приложение локально
+
+------------------------------------------------------------------------------------------------------------------
+
+### Хосты кластера
+
+хост для входа в приложение - http://testkuber/all
+хост для входа в графану    - http://testkuber.grafana  
+(логин/пароль для доступа - admin/password123 (auth), логин/пароль для входа - admin/prom-operator (values.yaml))

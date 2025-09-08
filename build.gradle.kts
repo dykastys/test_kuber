@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.example"
-version = "1.0.0"
+version = "1.1.0"
 description = "Demo project for Spring Boot"
 
 java {
@@ -23,11 +23,13 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.liquibase:liquibase-core")
 	implementation("io.github.microutils:kotlin-logging:3.0.5")
 	runtimeOnly("org.postgresql:postgresql")
+	implementation("io.micrometer:micrometer-registry-prometheus")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("org.testcontainers:postgresql:1.21.3")

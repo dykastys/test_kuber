@@ -8,7 +8,8 @@ spec:
   selector:
     {{- include "spring-app.labels" . | nindent 4 }}
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: {{ .Values.service.port }}
       targetPort: {{ .Values.app.containerPort }}
   type: ClusterIP

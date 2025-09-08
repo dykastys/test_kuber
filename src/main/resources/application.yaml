@@ -13,3 +13,28 @@ spring:
     driver-class-name: org.postgresql.Driver
 server:
   port: ${SERVER_PORT}
+
+# Настройки Spring Boot Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus  # Включаем нужные эндпоинты
+      base-path: /actuator
+      path-mapping:
+        prometheus: /prometheus  # Опционально: изменить путь к prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      access: unrestricted
+    metrics:
+      access: unrestricted
+  metrics:
+    tags:
+      application: ${spring.application.name:my-app}  # Добавляем теги к метрикам
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 60s

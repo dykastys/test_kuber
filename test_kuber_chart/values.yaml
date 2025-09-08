@@ -22,7 +22,7 @@ nginxIngress:
 # Параметры приложения
 app:
   replicaCount: 1
-  image: dykastys/test_kuber:latest
+  image: dykastys/test_kuber:1.1.0
   containerPort: 8090
 
 # Параметры сервиса
@@ -61,3 +61,39 @@ postgres:
 # База данных
 db:
   name: test_kuber_prod
+
+# Включение мониторинга (Prometheus + Grafana)
+monitoring:
+  enabled: true
+
+# Настройки kube-prometheus-stack
+kubePrometheusStack:
+  enabled: true
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      serviceMonitorNamespaceSelector: {}
+      podMonitorNamespaceSelector: {}
+  grafana:
+    enabled: true
+    adminPassword: "prom-operator"
+    service:
+      type: ClusterIP
+      port: 80
+    ingress:
+      enabled: false
+    additionalDataSources:
+      - name: Prometheus
+        type: prometheus
+        url: http://test-kuber-chart-kube-prometheus-prometheus:9090
+        access: proxy
+        isDefault: true
+
+grafana:
+  ingress:
+    enabled: true
+    host: testkuber.grafana
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
