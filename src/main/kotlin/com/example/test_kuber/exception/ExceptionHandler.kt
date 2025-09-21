@@ -20,6 +20,24 @@ class ExceptionHandler {
         errorMessage = e.message ?: "Bad Request"
     )
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFountException::class)
+    fun handleHttpMessageNotReadableException(e: UserNotFountException) = ErrorResponse(
+        status = HttpStatus.NOT_FOUND.value(),
+        errorCode = 404,
+        errorMessage = e.message ?: "Bad Request"
+    )
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(RoleNotFountException::class)
+    fun handleHttpMessageNotReadableException(e: RoleNotFountException) = ErrorResponse(
+        status = HttpStatus.NOT_FOUND.value(),
+        errorCode = 404,
+        errorMessage = e.message ?: "Bad Request"
+    )
+
     companion object {
         private val LOG = KotlinLogging.logger {}
     }

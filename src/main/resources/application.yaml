@@ -14,6 +14,10 @@ spring:
 server:
   port: ${SERVER_PORT}
 
+jwt:
+  rsa-public-key: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
 # Настройки Spring Boot Actuator
 management:
   endpoints:

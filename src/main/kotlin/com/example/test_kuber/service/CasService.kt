@@ -1,51 +1,52 @@
 package com.example.test_kuber.service
 
-import com.example.test_kuber.dto.CasDto
-import com.example.test_kuber.persistence.entity.Address
+import com.example.test_kuber.dto.RoleDto
+import com.example.test_kuber.exception.RoleNotFountException
+import com.example.test_kuber.exception.UserNotFountException
 import com.example.test_kuber.persistence.entity.Cas
+import com.example.test_kuber.persistence.entity.CasRole
 import com.example.test_kuber.persistence.repository.CasRepository
-import mu.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CasService(
-    val casRepository: CasRepository
+    val casRepository: CasRepository,
+    val roleService: RoleService
 ) {
+    @Transactional
+    fun save(cas: Cas): Cas = casRepository.save(cas)
 
-    fun findAll(): List<CasDto> {
-        return casRepository.findAll().map { it.toCasDto() }
-            .also { LOG.info { "found ${it.size} cases" } }
+    @Transactional(readOnly = true)
+    fun findById(casId: Long): Cas? = casRepository.findById(casId).orElse(null)
+
+    @Transactional(readOnly = true)
+    fun findByIdAndConvertToListRoles(casId: Long): List<String> {
+        val cas = casRepository.findById(casId).orElse(null)
+            ?: throw UserNotFountException("User userID=$casId not found")
+        return cas.roles.map { it.roleName }
     }
 
-    fun findById(id: Long): CasDto {
-        return casRepository.findById(id).orElseThrow().toCasDto()
-            .also { LOG.info { "Found cas: $it" } }
+    @Transactional(readOnly = true)
+    fun findByUsername(username: String): Cas? = casRepository.findByName(username)
+
+    @Transactional
+    fun addRoleToCas(casId: Long, roleDto: RoleDto): Cas {
+        val cas = casRepository.findById(casId).orElse(null)
+            ?: throw UserNotFountException("User userID=$casId not found")
+        val role = roleService.getRoleByName(roleDto.roleName)
+            ?: throw RoleNotFountException("Role ${roleDto.roleName} does not exist")
+        cas.roles.add(role)
+        return casRepository.save(cas)
     }
 
-    fun save(casDto: CasDto): CasDto {
-        val address = Address(
-            city = casDto.address.city,
-            street = casDto.address.street,
-            house = casDto.address.houseNumber
-        )
-        val cas = Cas(name = casDto.name, address = address)
-        return casRepository.save(cas).toCasDto()
-            .also { LOG.info { "Cas saved: $it" } }
-    }
-
-    fun update(id: Long, casDto: CasDto): CasDto {
-        val cas = casRepository.findById(id).orElseThrow()
-        cas.updateByCasDto(casDto)
-        return casRepository.save(cas).toCasDto()
-            .also { LOG.info { "Updated cas: $cas" } }
-    }
-
-    fun delete(id: Long) {
-        casRepository.deleteById(id)
-            .also { LOG.info { "Deleted Case with id $id was successfully deleted" } }
-    }
-
-    companion object {
-        private val LOG = KotlinLogging.logger {}
+    @Transactional
+    fun deleteRoleFromCas(casId: Long, roleDto: RoleDto): Cas {
+        val cas = casRepository.findById(casId).orElse(null)
+            ?: throw UserNotFountException("User userID=$casId not found")
+        val role = roleService.getRoleByName(roleDto.roleName)
+            ?: throw RoleNotFountException("Role ${roleDto.roleName} does not exist")
+        cas.roles = cas.roles.filter { it == role } as MutableList<CasRole>
+        return casRepository.save(cas)
     }
 }

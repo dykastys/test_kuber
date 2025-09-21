@@ -1,12 +1,24 @@
 package com.example.test_kuber.dto
 
-class CasDto(
-    val name: String,
-    val address: AddressDto,
+class CasInfo(
+    val casId: Long,
+    val sub: String,
+    val roles: List<String>? = null
 )
 
-class AddressDto(
-    val city: String,
-    val street: String,
-    val houseNumber: String
+class CasProfileDto(
+    val casId: Long?,
+    val name: String? = null,
+    val email: String? = null,
+    var fullName: String? = null,
+    var phone: String? = null,
+    val city: String? = null,
+    val street: String? = null,
+    val houseNumber: String? = null
+)
+
+class CasRoleDto(
+    val casId: Long?,
+    val name: String,
+    val roles: List<String>
 )

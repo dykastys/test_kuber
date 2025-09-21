@@ -8,7 +8,6 @@ import org.springframework.data.util.ProxyUtils
 
 @MappedSuperclass
 abstract class BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null

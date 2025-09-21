@@ -8,7 +8,7 @@ RUN ./gradlew assemble --no-daemon
 FROM openjdk:21-jdk-slim
 
 RUN mkdir /app
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/test_kuber-1.1.0.jar
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/test_kuber-1.3.0.jar
 
 # Запускаем приложение
-ENTRYPOINT ["java", "-jar", "/app/test_kuber-1.1.0.jar"]
+ENTRYPOINT ["java", "-jar", "/app/test_kuber-1.3.0.jar"]
