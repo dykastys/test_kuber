@@ -31,6 +31,7 @@ class JwtUtils(
 
         return Jwts.builder()
             .setSubject(username)
+            .setIssuer("myapp-issuer")
             .claim("casId", cas.id)                  // ← ID из БД
             .claim("roles", cas.roles.map { it.roleName })
             .setIssuedAt(Date())

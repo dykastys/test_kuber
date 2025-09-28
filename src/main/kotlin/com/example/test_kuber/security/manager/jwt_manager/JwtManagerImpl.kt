@@ -14,8 +14,10 @@ class JwtManagerImpl(
     private val jwtParser: JwtParser
 ) : JwtManager {
 
-    override fun decodeCasInfo(jwt: String): CasInfo =
-        jwtParser.parseClaimsJws(jwt)
+    override fun decodeCasInfo(jwt: String): CasInfo {
+        val jwtWithoutBearer = jwt.substring(jwt.indexOf(' ') + 1)
+        return jwtParser.parseClaimsJws(jwtWithoutBearer)
             .body
             .let { objectMapper.convertValue(it) }
+    }
 }

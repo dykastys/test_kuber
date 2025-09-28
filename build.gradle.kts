@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.example"
-version = "1.3.0"
+version = "1.3.4"
 description = "Demo project for Spring Boot"
 
 java {

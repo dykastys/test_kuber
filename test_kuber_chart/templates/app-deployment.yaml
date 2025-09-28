@@ -24,6 +24,8 @@ spec:
                 name: {{ include "spring-app.fullname" . }}-config
             - secretRef:
                 name: {{ include "postgres.fullname" . }}-secret
+            - secretRef:
+                name: {{ include "spring-app.fullname" . }}-app-jwt
             # --- пробы ---
           livenessProbe:
             httpGet:

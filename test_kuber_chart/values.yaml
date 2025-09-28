@@ -1,29 +1,39 @@
-# Включение NGINX Ingress Controller
-nginxIngress:
+# Включение Kong Ingress Controller вместо NGINX
+kong:
   enabled: true
-  controller:
-    service:
-      type: LoadBalancer
-      nodePorts:
-        http: 30080
-        https: 30443
-    replicaCount: 1
-    nodeSelector:
-      kubernetes.io/os: linux
-    tolerations:
-      - key: "node-role.kubernetes.io/control-plane"
-        operator: "Exists"
-        effect: "NoSchedule"
-    ingressClassResource:
-      name: nginx
+  authCookieName: "auth_token"
+  jwtConsumer: "myapp-user"
+  jwtKey: "myapp-issuer"        # Должен совпадать с iss в JWT
+  jwtAlgorithm: "RS256"         # Алгоритм подписи
+
+  # Настройки прокси
+  proxy:
+    type: LoadBalancer
+    http:
       enabled: true
-      default: true     # ← делает IngressClass/nginx дефолтным
+      servicePort: 80
+      containerPort: 8000
+    tls:
+      enabled: false
+
+  # Реплики и ресурсы
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
 
 # Параметры приложения
 app:
   replicaCount: 1
-  image: dykastys/test_kuber:1.1.0
+  image: dykastys/test_kuber:1.3.4
   containerPort: 8090
+  JWT_SECRET: |
+    {{ .Values.kong.jwtPublicKey | indent 6 }}
+  JWT_EXPIRATION: "86400000"
 
 # Параметры сервиса
 service:
@@ -35,8 +45,6 @@ ingress:
   enabled: true
   host: testkuber
   pathType: ImplementationSpecific
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
 
 # PostgreSQL
 postgres:

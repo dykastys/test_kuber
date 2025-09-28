@@ -13,7 +13,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-secret: grafana-basic-auth
     nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
 spec:
-  ingressClassName: nginx
+  ingressClassName: kong
   rules:
     - host: {{ .Values.grafana.ingress.host }}
       http:
@@ -22,7 +22,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: myapp-grafana
+                name: {{ .Release.Name }}-grafana
                 port:
                   number: 80
 {{- end }}

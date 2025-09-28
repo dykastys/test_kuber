@@ -7,7 +7,6 @@ class CasInfo(
 )
 
 class CasProfileDto(
-    val casId: Long?,
     val name: String? = null,
     val email: String? = null,
     var fullName: String? = null,
